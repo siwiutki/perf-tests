@@ -18,5 +18,5 @@ spec:
       k8s-app: hubble-relay
   namespaceSelector:
     matchNames:
-      - kube-system
+      - gke-managed-dpv2-observability
 {{end}}

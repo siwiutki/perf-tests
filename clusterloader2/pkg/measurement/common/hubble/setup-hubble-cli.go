@@ -65,7 +65,7 @@ func (shcm *setupHubbleCliMeasurement) Dispose() {
 		klog.V(1).Infof("%s measurement wasn't started, skipping the Dispose() step", shcm.String())
 		return
 	}
-	if err := shcm.framework.DeleteObject(hubbleCliSchema, "kube-system", "hubble-cli"); err != nil {
+	if err := shcm.framework.DeleteObject(hubbleCliSchema, "gke-managed-dpv2-observability", "hubble-cli"); err != nil {
 		klog.Errorf("Failed to delete Hubble-cli pod: %v", err)
 	}
 }

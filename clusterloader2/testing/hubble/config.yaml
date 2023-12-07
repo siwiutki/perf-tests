@@ -14,15 +14,12 @@ steps:
     path: /modules/measurements.yaml
     params:
       action: start
-- name: Prepare pods for the test
+- name: Prepare sample flow traffic
   measurements:
-  - Identifier: Set up ping server and ping client workloads
-    Method: InClusterNetworkLatency
+  - Identifier: Prepare Sample Network Traffic
+    Method: PrepareSampleNetworkTraffic
     Params:
       action: start
-      checkProbesReadyTimeout: {{$PROBE_MEASUREMENTS_CHECK_PROBES_READY_TIMEOUT}}
-      replicasPerProbe: {{$PROBE_MEASUREMENTS_PING_WORKLOAD_REPLICAS}}
-      pingSleepDuration: {{$PROBE_MEASUREMENTS_PING_SLEEP_DURATION}}
 - name: Setup hubble-cli
   measurements:
   - Identifier: SetupHubbleCli
@@ -35,6 +32,12 @@ steps:
     Method: Sleep
     Params:
       duration: {{$FLOW_SLEEP_DURATION}}
+- name: Stop sample flow traffic
+  measurements:
+  - Identifier: Stop Sample Network Traffic
+    Method: PrepareSampleNetworkTraffic
+    Params:
+      action: gather
 - name: Gather measurements
   module:
     path: /modules/measurements.yaml

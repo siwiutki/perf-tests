@@ -14,7 +14,7 @@ spec:
     port: flowmetrics
     relabelings:
     - sourceLabels: [__name__]
-      regex: "pod_flow_handler"
+      regex: "pod_flow_handler|up|scrape_duration_seconds"
       action: keep
   jobLabel: k8s-app
   selector:

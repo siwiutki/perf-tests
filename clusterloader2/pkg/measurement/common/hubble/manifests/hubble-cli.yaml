@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: hubble-cli-cl2-deployment
-  namespace: kube-system
+  namespace: gke-managed-dpv2-observability
   labels:
     app: hubble-cli-cl2
 spec:
@@ -22,7 +22,7 @@ spec:
         args: [ "while true; do hubble observe; sleep 4; done" ]
         env:
           - name: HUBBLE_SERVER
-            value: tls://hubble-relay.kube-system.svc.cluster.local:443
+            value: tls://hubble-relay.gke-managed-dpv2-observability.svc.cluster.local:443
           - name: HUBBLE_TLS_CERT_PATH
             value: /var/lib/hubble-relay/tls
           - name: HUBBLE_TLS_CLIENT_CERT_FILE
@@ -32,7 +32,7 @@ spec:
           - name: HUBBLE_TLS_CA_CERT_FILES
             value: $(HUBBLE_TLS_CERT_PATH)/hubble-server-ca.crt
           - name: HUBBLE_TLS_SERVER_NAME
-            value: hubble-relay.kube-system.svc.cluster.local
+            value: hubble-relay.gke-managed-dpv2-observability.svc.cluster.local
         volumeMounts:
         - name: tls
           mountPath: /var/lib/hubble-relay/tls

@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: echoserver-deployment
+  namespace: sample-traffic
+spec:
+  replicas: 4965
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: echoserver
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: echoserver
+    spec:
+      containers:
+      - name: echoserver
+        imagePullPolicy: Always
+        image: gcr.io/google-containers/echoserver:1.10
+        ports:
+        - containerPort: 8080

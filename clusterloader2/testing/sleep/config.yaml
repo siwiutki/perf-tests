@@ -1,0 +1,14 @@
+# Test config for a scenario with high network flow load
+
+{{$SLEEP_DURATION := DefaultParam .CL2_SLEEP_DURATION "72h"}}
+
+name: sleep
+namespace:
+  number: 1
+steps:
+- name: Sleep
+  measurements:
+  - Identifier: Sleep
+    Method: Sleep
+    Params:
+      duration: {{$SLEEP_DURATION}}

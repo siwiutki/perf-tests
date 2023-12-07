@@ -6,6 +6,10 @@
 {{$CUSTOM_ALLOWED_CONTAINER_RESTARTS := DefaultParam .CL2_CUSTOM_ALLOWED_CONTAINER_RESTARTS ""}}
 {{$PROMETHEUS_MEASUREMENTS_ENABLE_VIOLATIONS := DefaultParam .CL2_PROMETHEUS_MEASUREMENTS_ENABLE_VIOLATIONS true}}
 
+{{$RELAY_UNAVAILABLE_NODES_THRESHOLD_PERCENT := 1}}
+{{$RELAY_UNAVAILABLE_NODES_THRESHOLD := DivideInt (MultiplyInt .Nodes $RELAY_UNAVAILABLE_NODES_THRESHOLD_PERCENT) 100}}
+{{$RELAY_AVAILABLE_NODES_THRESHOLD := SubtractInt .Nodes $RELAY_UNAVAILABLE_NODES_THRESHOLD}}
+
 steps:
 - name: "{{$action}}ing measurements"
   measurements:
@@ -75,8 +79,22 @@ steps:
       - name: Ratio of failed requests to total requests
         query: sum(increase(grpc_server_handled_total{job="hubble-relay",endpoint="metrics",grpc_code!="OK"}[%v:])) / sum(increase(grpc_server_handled_total{job="hubble-relay",endpoint="metrics"}[%v:]))
         threshold: 0.01
-  # TODO(siwiutki): add measurement for number of unavailable nodes reported by hubble-relay,
-  #                 which will be possible once https://github.com/cilium/cilium/pull/28217 gets merged.
+  - Identifier: Measure DPv2 observability relay peer connectivity status
+    Method: GenericPrometheusQuery
+    Params:
+      action: {{$action}}
+      metricName: DPv2 observability relay peer connectivity status
+      metricVersion: v1
+      unit: nodes avg
+      enableViolations: {{$PROMETHEUS_MEASUREMENTS_ENABLE_VIOLATIONS}}
+      queries:
+      - name: Average number of not available nodes
+        query: sum(avg_over_time(hubble_relay_pool_peer_connection_status{status!="READY"}[%v:]))
+        threshold: {{$RELAY_UNAVAILABLE_NODES_THRESHOLD}}
+      - name: Average number of available nodes
+        query: sum(avg_over_time(hubble_relay_pool_peer_connection_status{status="READY"}[%v:]))
+        threshold: {{$RELAY_AVAILABLE_NODES_THRESHOLD}}
+        lowerBound: true
 {{end}}
 
 

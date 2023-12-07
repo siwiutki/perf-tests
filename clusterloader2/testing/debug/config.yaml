@@ -1,0 +1,42 @@
+# Test config for a scenario with high network flow load
+
+{{$SLEEP_DURATION := DefaultParam .CL2_SLEEP_DURATION "72h"}}
+
+name: debug
+namespace:
+  number: 1
+steps:
+- name: Test measurement - start
+  measurements:
+  - Identifier: Test measurement
+    Method: GenericPrometheusQuery
+    Params:
+      action: start
+      metricName: testerino
+      metricVersion: v1
+      unit: s
+      enableViolations: true
+      queries:
+      - name: yeehaw
+        query: vector(2)
+        threshold: 1
+- name: Wait 10 seconds
+  measurements:
+    - Identifier: Wait
+      Method: Sleep
+      Params:
+        duration: 10s
+- name: Test measurement - gather
+  measurements:
+  - Identifier: Test measurement
+    Method: GenericPrometheusQuery
+    Params:
+      action: gather
+      metricName: testerino
+      metricVersion: v1
+      unit: s
+      enableViolations: true
+      queries:
+      - name: yeehaw
+        query: vector(2)
+        threshold: 1
